@@ -47,20 +47,6 @@ MANAGERS = ADMINS
 ########## END MANAGER CONFIGURATION
 
 
-########## DATABASE CONFIGURATION
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cinema_app',
-        'USERNAME':'chris',
-        'PASSWORD':'BogTroggler10',
-        'PORT':'3306',
-        'HOST': 'localhost',
-    }
-}
-########## END DATABASE CONFIGURATION
 
 
 ########## GENERAL CONFIGURATION
@@ -68,7 +54,7 @@ DATABASES = {
 TIME_ZONE = 'Europe/London'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-uk'
+LANGUAGE_CODE = 'en-gb'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -162,7 +148,7 @@ TEMPLATE_DIRS = (
 
 ########## MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     # Default Django middleware.
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -170,6 +156,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 ########## END MIDDLEWARE CONFIGURATION
 
@@ -199,14 +186,14 @@ DJANGO_APPS = (
 )
 
 LOCAL_APPS = (
-    'accounts',
-    'analytics',
-    'api',
-    'box_office',
-    'chatbot',
-    'films',
-    'media',
-    'screens',
+    'cinema_app.accounts',
+    'cinema_app.analytics',
+    'cinema_app.api',
+    'cinema_app.box_office',
+    'cinema_app.chatbot',
+    'cinema_app.films',
+    'cinema_app.media',
+    'cinema_app.screens',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -253,12 +240,26 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 ########## END WSGI CONFIGURATION
 
 
-########## SOUTH CONFIGURATION
-# See: http://south.readthedocs.org/en/latest/installation.html#configuring-your-django-installation
-INSTALLED_APPS += (
-    # Database migration helpers:
-    'south',
-)
-# Don't need to use South when setting up a test database.
-SOUTH_TESTS_MIGRATE = False
-########## END SOUTH CONFIGURATION
+# ########## SOUTH CONFIGURATION
+# # See: http://south.readthedocs.org/en/latest/installation.html#configuring-your-django-installation
+# INSTALLED_APPS += (
+#     # Database migration helpers:
+#     'south',
+# )
+# # Don't need to use South when setting up a test database.
+# SOUTH_TESTS_MIGRATE = False
+# ########## END SOUTH CONFIGURATION
+
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [normpath(join(SITE_ROOT, 'templates'))],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages']
+        },
+    },
+]
