@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.db import models
 
+from cinema_app.accounts.utils import certificate_age_ranges
 from cinema_app.core.models import TimeStampedModel
+from cinema_app.films.models import Film, Genre
 
 from django_countries.fields import CountryField
 
@@ -27,18 +29,19 @@ class Customer(User):
         delta = self.birthdate - datetime.today()
         return round(delta.days / 365, 0)
 
-    # create dictionary for these options
     @property
     def allowed_certificate(self):
         age = self.calculate_age
-        if age >= 18:
-            return '18+'
-        elif 15 >= age < 18:
-            return '15'
-        elif 12 >= age < 15:
-            return '12'
-        else:
-            return 'U/PG'
+        for _range in certificate_age_ranges:
+            lower, upper = _range[0]
+            if lower >= age < upper:
+                return _range[2]
+
+    @property
+    def senior_member(self):
+        if self.calculate_age < 60:
+            return False
+        return True
 
 
 class CustomerAddress(TimeStampedModel):
@@ -55,26 +58,27 @@ class CustomerAddress(TimeStampedModel):
         blank=False
     )
 
-    address1 = models.CharField(
-        "Address line 1",
+    street = models.CharField(
+        "Street address",
         max_length=300,
-        blank=False
-    )
-
-    address2 = models.CharField(
-        "Address line 2",
-        max_length=300,
-    )
-
-    postal_code = models.CharField(
-        "UK postal code",
-        max_length=20,
         blank=False
     )
 
     city = models.CharField(
         "City",
         max_length=100,
+    )
+
+    county = models.CharField(
+        "County",
+        max_length=300,
+        blank=False
+    )
+
+    postal_code = models.CharField(
+        "Postal code",
+        max_length=20,
+        blank=False
     )
 
     country = models.CharField(
@@ -85,16 +89,38 @@ class CustomerAddress(TimeStampedModel):
 
 class Account(TimeStampedModel):
 
-    film_club_activation_date = models.DateField()
-
-
-    film_club_membership_expiry = models.DateField(
-        default=datetime.now()+timedelta(days=365)
+    film_club_membership = models.OneToOneField(
+        'FilmClubSubscription',
+        null=True,
+        on_delete=models.SET_NULL
     )
 
     preference_info = models.OneToOneField(
         'CustomerPreferenceInfo',
-        null=False
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+
+class CustomerPreferenceInfo(TimeStampedModel):
+
+    preferred_genres = models.ManyToManyField(
+        Genre,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    films_viewed = models.ManyToManyField(
+        Film,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+
+class FilmClubSubscription(TimeStampedModel):
+
+    film_club_membership_expiry = models.DateField(
+        default=datetime.now() + timedelta(days=365)
     )
 
     @property
@@ -102,16 +128,3 @@ class Account(TimeStampedModel):
         if datetime.now() > self.film_club_membership_expiry:
             return False
         return True
-
-
-
-class CustomerPreferenceInfo(TimeStampedModel):
-
-    pass
-    # implement when ready
-    #preferred_genres = models.ManyToManyField(Genre)
-
-    # films_viewed - a foreignkey to the films model (on the film model)
-
-    # adult_customer = models.BooleanField(null=False)
-

@@ -1,0 +1,28 @@
+
+
+film_genres = [
+    ('ACTION', 'Action'),
+    ('ADVENTURE', 'Adventure'),
+    ('ANIMATION', 'Animation'),
+    ('BIOGRAPHY', 'Biography'),
+    ('COMEDY', 'Comedy'),
+    ('CRIME', 'Crime'),
+    ('DOCUMENTARY', 'Documentary'),
+    ('DRAMA', 'Drama'),
+    ('FAMILY', 'Family'),
+    ('FANTASY', 'Fantasy'),
+    ('FILM NOIR', 'Film Noir'),
+    ('HISTORY', 'History'),
+    ('HORROR', 'Horror'),
+    ('MUSIC', 'Music'),
+    ('MUSICAL', 'Musical'),
+    ('MYSTERY', 'Mystery'),
+    ('ROMANCE', 'Romance'),
+    ('SCI-FI', 'Sci-Fi'),
+    ('SHORT FILM', 'Short Film'),
+    ('SPORT', 'Sport'),
+    ('SUPERHERO', 'Superhero'),
+    ('THRILLER', 'Thriller'),
+    ('WAR', 'War'),
+    ('WESTERN', 'Western'),
+]
