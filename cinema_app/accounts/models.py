@@ -14,14 +14,12 @@ from django_countries.fields import CountryField
 
 class Customer(User):
 
-    birthdate = models.DateField(
-        auto_now_add=True,
-        null=False
-    )
+    birthdate = models.DateField()
 
     account = models.OneToOneField(
         'Account',
-        on_delete=models.CASCADE
+        null=True,
+        on_delete=models.SET_NULL
     )
 
     @property
@@ -45,6 +43,10 @@ class Customer(User):
 
 
 class CustomerAddress(TimeStampedModel):
+
+    primary = models.BooleanField(
+        default=False
+    )
 
     customer = models.ForeignKey(
         'Customer',
@@ -72,7 +74,6 @@ class CustomerAddress(TimeStampedModel):
     county = models.CharField(
         "County",
         max_length=300,
-        blank=False
     )
 
     postal_code = models.CharField(
@@ -81,10 +82,13 @@ class CustomerAddress(TimeStampedModel):
         blank=False
     )
 
-    country = models.CharField(
-        "Country",
-        choices=CountryField()
-    )
+    country = CountryField(blank_label='(select country)')
+
+    def __str__(self):
+        return "{} address, primary - {}".format(
+            self.customer.get_full_name(),
+            str(self.primary)
+        )
 
 
 class Account(TimeStampedModel):
@@ -101,20 +105,26 @@ class Account(TimeStampedModel):
         on_delete=models.SET_NULL
     )
 
+    def __str__(self):
+        return "{} account".format(
+            self.customer.get_full_name()
+        )
+
 
 class CustomerPreferenceInfo(TimeStampedModel):
 
     preferred_genres = models.ManyToManyField(
-        Genre,
-        null=True,
-        on_delete=models.SET_NULL
+        Genre
     )
 
     films_viewed = models.ManyToManyField(
-        Film,
-        null=True,
-        on_delete=models.SET_NULL
+        Film
     )
+
+    def __str__(self):
+        return "{} preference information".format(
+            self.account.customer.get_full_name()
+        )
 
 
 class FilmClubSubscription(TimeStampedModel):
@@ -128,3 +138,8 @@ class FilmClubSubscription(TimeStampedModel):
         if datetime.now() > self.film_club_membership_expiry:
             return False
         return True
+
+    def __str__(self):
+        return "{} membership details".format(
+            self.account.customer.get_full_name()
+        )

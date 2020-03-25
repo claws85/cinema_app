@@ -217,6 +217,9 @@ LOGGING = {
         }
     },
     'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -229,7 +232,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+        },
 }
 ########## END LOGGING CONFIGURATION
 

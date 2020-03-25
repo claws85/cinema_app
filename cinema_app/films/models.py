@@ -8,28 +8,31 @@ from cinema_app.films.utils import film_genres
 class Genre(models.Model):
 
     name = models.CharField(
+        max_length=15,
         choices=film_genres,
-        blank=False,
-        null=True
+        unique=True,
     )
+
+    def __str__(self):
+        return "{}".format(
+            self.name
+        )
 
 
 class Film(TimeStampedModel):
 
     genre = models.ManyToManyField(
-        Genre,
-        on_delete=models.SET_NULL
+        'Genre',
     )
 
     name = models.CharField(
-        blank=False,
-        null=True
+        max_length=300
     )
+
+    year = models.DateField()
 
     rating = models.CharField(
         max_length=10,
-        blank=False,
-        null=True
     )
 
     runtime = models.CharField(
@@ -38,11 +41,17 @@ class Film(TimeStampedModel):
 
     description = models.CharField(
         max_length=500,
+        blank=True,
     )
 
     metascore = models.CharField(
         max_length=5,
-        blank=False
     )
+
+    def __str__(self):
+        return "{}, {}".format(
+            self.name,
+            self.year
+        )
 
 

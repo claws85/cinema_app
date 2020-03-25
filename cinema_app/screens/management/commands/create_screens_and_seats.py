@@ -15,53 +15,57 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         try:
-            create_screens()
+            self.create_screens()
+
+            self.create_seats()
+
+        except Exception as e:
+            logger.error("The following error was encountered during the "
+                         "creation of the cinema screens and seats:\n"
+                         "{}".format(e)
+                         )
+
+    def create_screens(self):
+        """
+        Creates the cinema's two screens, with
+        100 seat capacity
+        """
+        if not Screen.objects.all():
+            for num in range(1, 3):
+                Screen.objects.create(
+                    number=num,
+                    capacity=100
+                )
             self.stdout.write("Cinema screens created.\n")
 
-            create_seats()
-            self.stdout.write("Screen seats created.")
+    def create_seats(self):
+        """
+        Creates seats for each cinema screen,
+        with 30 premium seats
+        """
+        seat_rows = ['A', 'B', 'C', 'D', 'E',
+                     'F', 'G', 'H', 'I', 'J']
 
-        except:
-            logger.error("An error was encountered during the "
-                         "creation of the cinema screens and seats")
+        premium_rows = {'H': 'H',
+                        'I': 'I',
+                        'J': 'J'}
 
+        if not Seat.objects.all():
 
-def create_screens():
-    """
-    Creates the cinema's two screens, with
-    100 seat capacity
-    """
+            with transaction.atomic():
+                for screen in Screen.objects.all():
+                    for row in seat_rows:
+                        for num in range(1, 11):
 
-    for num in range(1, 3):
-        Screen.objects.create(
-            number=num,
-            capacity=100
-        )
+                            kwargs = {
+                                'screen': screen,
+                                'seat_number': row+'-'+str(num),
+                            }
+                            if premium_rows.get(row):
 
+                                kwargs['premium'] = True
 
-def create_seats():
-    """
-    Creates seats for each cinema screen,
-    with 30 premium seats
-    """
-    seat_rows = ['A', 'B', 'C', 'D', 'E',
-                 'F', 'G', 'H', 'I', 'J']
-
-    premium_rows = {'H': 'H',
-                    'I': 'I',
-                    'J': 'J'}
-
-    with transaction.atomic():
-        for screen in Screen.objects.all():
-            for row in seat_rows:
-                for num in range(1, 11):
-                    kwargs = {
-                        'screen': screen,
-                        'seat_number': row+'-'+str(num),
-                    }
-                    if premium_rows.get(row):
-                        kwargs['premium'] = True
-
-                    Seat.objects.create(
-                        *kwargs
-                    )
+                            Seat.objects.create(
+                                **kwargs
+                            )
+                self.stdout.write("Screen seats created.")
