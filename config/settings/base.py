@@ -261,7 +261,7 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [normpath(join(SITE_ROOT, 'templates'))],
+        'DIRS': [normpath(join(SITE_ROOT, 'cinema_app/templates'))],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -270,3 +270,10 @@ TEMPLATES = [
         },
     },
 ]
+
+#Authentication backends
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
+AUTH_USER_MODEL = 'accounts.Customer'

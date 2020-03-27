@@ -10,9 +10,10 @@ from cinema_app.films.models import Film, Genre
 
 from django_countries.fields import CountryField
 
+from django.contrib.auth.models import AbstractUser
 
 
-class Customer(User):
+class Customer(AbstractUser):
 
     birthdate = models.DateField()
 
