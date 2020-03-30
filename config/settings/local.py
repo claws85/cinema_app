@@ -14,7 +14,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cinema_app',
         'USERNAME':'chris',
-        'PASSWORD':'',
+        'PASSWORD':'BogTroggler10',
         'PORT':'3306',
         'HOST': 'localhost',
     }

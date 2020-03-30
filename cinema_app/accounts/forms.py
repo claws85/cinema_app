@@ -1,7 +1,7 @@
 
 from django import forms
 
-from cinema_app.accounts.models import Customer
+from cinema_app.accounts.models import Customer, Account
 
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
@@ -15,9 +15,11 @@ class CustomUserCreationForm(forms.ModelForm):
         model = Customer
         fields = ('email', 'first_name', 'last_name')
 
-    def clean_password(self):
+    def clean_password2(self):
+
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
+
         if password1 and password2 and password1 != password2:
             msg = "Passwords don't match"
             raise forms.ValidationError(msg)
@@ -28,7 +30,7 @@ class CustomUserCreationForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
 
         try:
-            Customer.objects.filter(email=email)
+            Customer.objects.get(email=email)
         except Customer.DoesNotExist:
             return email
 
@@ -47,7 +49,9 @@ class CustomUserCreationForm(forms.ModelForm):
         user.username = username
 
         if commit:
+            user.account = Account.objects.create()
             user.save()
+
         return user
 
 
